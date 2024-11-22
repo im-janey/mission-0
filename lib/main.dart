@@ -2,50 +2,72 @@ import 'package:flutter/material.dart';
 
 import 'screens/intro/splash1.dart';
 
-// Light and Dark Theme
-ThemeData lightTheme = ThemeData(
-  primaryColor: const Color(0xFF2B4E8D),
-  scaffoldBackgroundColor: Colors.white,
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.white,
-    elevation: 0,
+// 공통 색상 정의
+const primaryColor = Color(0xFF4A90E2);
+const secondaryColor = Color(0xFF50E3C2);
+
+// 공통 텍스트 스타일
+const textTheme = TextTheme(
+  bodyLarge: TextStyle(
+    fontFamily: 'Nanum_Gothic,Parkinsans',
+    color: Colors.black,
   ),
-  textTheme: const TextTheme(
-    bodyLarge: TextStyle(color: Colors.black),
-    bodyMedium: TextStyle(color: Colors.black),
+  bodyMedium: TextStyle(
+    fontFamily: 'Nanum_Gothic,Parkinsans',
+    color: Colors.black,
   ),
+);
+
+const darkTextTheme = TextTheme(
+  bodyLarge: TextStyle(
+    fontFamily: 'Nanum_Gothic,Parkinsans',
+    color: Colors.white,
+  ),
+  bodyMedium: TextStyle(
+    fontFamily: 'Nanum_Gothic,Parkinsans',
+    color: Colors.white,
+  ),
+);
+
+// 공통 앱바 테마
+AppBarTheme appBarTheme(Color backgroundColor) => AppBarTheme(
+      backgroundColor: backgroundColor,
+      elevation: 0,
+    );
+
+// 라이트 테마
+final ThemeData lightTheme = ThemeData(
+  primaryColor: primaryColor,
+  scaffoldBackgroundColor: const Color(0xFFF9FAFB),
+  appBarTheme: appBarTheme(const Color(0xFFF9FAFB)),
+  textTheme: textTheme,
   colorScheme: const ColorScheme.light(
-    primary: Color(0xFF2B4E8D),
-    secondary: Color(0xFF6C97CB),
-    surface: Color(0xFFF5F6FA),
+    primary: primaryColor,
+    secondary: secondaryColor,
+    surface: Colors.white,
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.black,
   ),
-  indicatorColor: const Color(0xFF2B4E8D),
+  indicatorColor: primaryColor,
   useMaterial3: true,
 );
 
-ThemeData darkTheme = ThemeData(
-  primaryColor: const Color(0xFF2B4E8D),
-  scaffoldBackgroundColor: const Color(0xFF1B2644),
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFF1B2644),
-    elevation: 0,
-  ),
-  textTheme: const TextTheme(
-    bodyLarge: TextStyle(color: Colors.white),
-    bodyMedium: TextStyle(color: Colors.white),
-  ),
+// 다크 테마
+final ThemeData darkTheme = ThemeData(
+  primaryColor: primaryColor,
+  scaffoldBackgroundColor: const Color(0xFF121212),
+  appBarTheme: appBarTheme(const Color(0xFF121212)),
+  textTheme: darkTextTheme,
   colorScheme: const ColorScheme.dark(
-    primary: Color(0xFF2B4E8D),
-    secondary: Color(0xFFB3C7E2),
-    surface: Color(0xFF1B2644),
+    primary: primaryColor,
+    secondary: secondaryColor,
+    surface: Color(0xFF1E1E1E),
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.white,
   ),
-  indicatorColor: const Color(0xFF2B4E8D),
+  indicatorColor: primaryColor,
   useMaterial3: true,
 );
 

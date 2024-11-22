@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-class PHQ9Page extends StatefulWidget {
-  const PHQ9Page({super.key});
+import 'history.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<PHQ9Page> createState() => _PH9PageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _PH9PageState extends State<PHQ9Page> {
+class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> _questions = [
     {"text": "이름이 무엇인가요?", "type": "text"},
     {
@@ -16,95 +18,56 @@ class _PH9PageState extends State<PHQ9Page> {
       "choices": ["네", "아니요"]
     },
     {
-      "text": "1) 일 또는 여가 활동을 하는 데 흥미나 즐거움을 느끼지 못함",
+      "text": "진지한 질문 하나만 해도 될까요?",
       "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
+      "choices": ["네", "아니요"]
     },
     {
-      "text": "2) 기분이 가라앉거나, 우울하거나, 희망이 없음",
+      "text": "당신이 오늘 죽으면 천국, 지옥이 존재한다고 할 때 이 중 어디에 갈 것 같으세요?",
       "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
+      "choices": ["천국", "지옥"]
     },
     {
-      "text": "3) 잠이 들거나 계속 잠을 자는 것이 어려움, 또는 잠을 너무 많이 잠",
+      "text": "“내가 왜 널 천국에 들여보내줘야 하지?“ 하나님께서 물으시면 당신은 어떤 이유를 들어 대답하시겠어요?",
+      "type": "text"
+    },
+    {"text": "또 질문해볼테니 대답해주세요.", "type": "next"},
+    {
+      "text": "지금까지 살면서 한 번이라도 훔쳐본 적 있으세요?",
       "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
+      "choices": ["네", "아니요"]
     },
     {
-      "text": "4) 피곤하다고 느끼거나 기운이 거의 없음",
+      "text": "그러면 살면서 거짓말 한 적 있으세요?",
       "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
+      "choices": ["네", "아니요"]
     },
     {
-      "text": "5) 입맛이 없거나 과식을 함",
+      "text": "살면서 부모님을 공경하지 않은 적 있으세요? 등등",
       "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
+      "choices": ["네", "아니요"]
     },
+    {"text": "당신도 나도 누구도 우리 모두는 죄 지어본 적 있는 죄인입니다.", "type": "next"},
+    {"text": "우리가 좋은 일을 얼마나 많이 했든,", "type": "next"},
+    {"text": "얼마나 좋은 사람이든,", "type": "next"},
+    {"text": "하나님은 love 사랑이시면서 동시에 justice 공의(정의)로운 분이시기에", "type": "next"},
+    {"text": "죄인인 우리 모두는 하나님의 법칙에 따라 죽어서 지옥에 가야만 마땅합니다.", "type": "next"},
     {
-      "text": "6) 자신을 부정적으로 봄. 혹은 자신이 실패자라고 느끼거나 자신 또는 가족을 실망시킴",
+      "text": "이 모든 내용을 이해하고 믿으시나요?",
       "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
+      "choices": ["네", "아니요"]
     },
+    {"text": "그러나 하나님께서 우리를 사랑하셔서", "type": "next"},
+    {"text": "당신의 아들인 예수님을 이 땅에 내려보내셨고", "type": "next"},
+    {"text": "예수님은 지옥에 가야 마땅한", "type": "next"},
+    {"text": "죄인인 당신의 죄를 대신하여", "type": "next"},
+    {"text": "십자가에 못 박혀 죽으신 후", "type": "next"},
+    {"text": "3일 만에 다시 사셨습니다.", "type": "next"},
+    {"text": "당신은 \"예수님을 믿는 것,\" 이 이유 하나만으로 천국에 갈 수 있습니다.", "type": "next"},
     {
-      "text": "7) 신문을 읽거나 텔레비전 보는 것과 같은 일에 집중하는 것이 어려움",
+      "text": "예수님을 믿고 천국에 가시겠어요?",
       "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
-    },
-    {
-      "text":
-          "8) 다른 사람들이 주목할 정도로 너무 느리게 움직이거나 말을 함. 또는 반대로 평상시보다 많이 움직여서, 너무 안절부절못하거나 들떠 있음",
-      "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
-    },
-    {
-      "text": "9) 자신이 죽는 것이 더 낫다고 생각하거나 어떤 식으로든 자신을 해칠 것이라고 생각함",
-      "type": "choice",
-      "choices": [
-        "전혀 방해 받지 않았다",
-        "며칠 동안 방해 받았다",
-        "7일 이상 방해 받았다",
-        "거의 매일 방해 받았다"
-      ]
+      "choices": ["네", "아니요"]
     },
   ];
 
@@ -170,7 +133,12 @@ class _PH9PageState extends State<PHQ9Page> {
             left: 20,
             child: IconButton(
               icon: const Icon(Icons.list, size: 30),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryPage()),
+                );
+              },
             ),
           ),
 
@@ -191,6 +159,19 @@ class _PH9PageState extends State<PHQ9Page> {
             child: Column(
               children: [
                 const SizedBox(height: 200),
+                Expanded(
+                  flex: 3,
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 160,
+                      backgroundColor: Colors.grey.shade300,
+                      child: const Icon(Icons.person,
+                          size: 180, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+
                 // 말풍선 카드
                 Stack(
                   alignment: Alignment.topCenter,
@@ -249,16 +230,16 @@ class _PH9PageState extends State<PHQ9Page> {
                     ),
                   )
                 else if (currentQuestion["type"] == "choice")
-                  Column(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: (currentQuestion["choices"] as List<String>)
                         .map((choice) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5), // 위아래 패딩
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   minimumSize:
-                                      Size(180, 60), // 최소 크기: 가로 180, 세로 60
+                                      Size(180, 60), // 최소 크기: 가로 200, 세로 60
                                   padding: EdgeInsets.symmetric(
                                       vertical: 15, horizontal: 40), // 버튼 내부 패딩
                                   textStyle: TextStyle(fontSize: 24), // 글씨 크기
