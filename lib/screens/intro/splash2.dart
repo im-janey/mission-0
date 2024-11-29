@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:misson_0/screens/intro/login.dart';
 
-import '../../packages/button.dart';
+import '../../packages/button.dart';
 
 class Splash2 extends StatefulWidget {
   const Splash2({super.key});

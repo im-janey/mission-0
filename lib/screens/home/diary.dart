@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DiaryPage extends StatefulWidget {
-  const DiaryPage({super.key});
+  const DiaryPage({super.key, required DateTime date, required initialImageUrl, required initialNote, required Null Function(dynamic imageUrl, dynamic note) onSave, required Null Function() onDelete});
 
   @override
   State<DiaryPage> createState() => _DiaryPageState();

@@ -27,7 +27,13 @@ class _AppPageState extends State<AppPage> {
         page = const HomePage();
         break;
       case 2:
-        page = const DiaryPage();
+        page = DiaryPage(
+          date: DateTime.now(),
+          initialImageUrl: null,
+          initialNote: null,
+          onSave: (imageUrl, note) {},
+          onDelete: () {},
+        );
         break;
       default:
         throw UnimplementedError('No widget for $selectedIndex');

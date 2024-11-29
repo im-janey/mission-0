@@ -15,7 +15,7 @@ class StartButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFFF35AE), Color(0xFF5AE4FF)],
+          colors: [Color(0xFF6ABF69), Color(0xFF5C8AFF)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),

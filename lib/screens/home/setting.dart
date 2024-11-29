@@ -94,11 +94,6 @@ class _MenuState extends State<Menu> {
                 ),
                 const SizedBox(height: 5),
                 ListTile(
-                    leading: Image.asset(
-                      'assets/profile.png',
-                      width: 30,
-                      height: 30,
-                    ),
                     title: const Text('프로필'),
                     onTap: () {
                       Navigator.push(
@@ -107,11 +102,6 @@ class _MenuState extends State<Menu> {
                       );
                     }),
                 ListTile(
-                  leading: Image.asset(
-                    'assets/favorite.png',
-                    width: 30,
-                    height: 30,
-                  ),
                   title: const Text('찜한 장소'),
                   trailing:
                       const Icon(Icons.arrow_forward_ios_rounded, size: 18),
@@ -123,19 +113,9 @@ class _MenuState extends State<Menu> {
                   },
                 ),
                 ListTile(
-                  leading: Image.asset(
-                    'assets/personal.png',
-                    width: 30,
-                    height: 30,
-                  ),
                   title: const Text('개인정보 보호'),
                 ),
                 ListTile(
-                  leading: Image.asset(
-                    'assets/inquiry.png',
-                    width: 30,
-                    height: 27,
-                  ),
                   title: const Text('문의하기'),
                 ),
               ],

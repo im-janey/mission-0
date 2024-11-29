@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'screens/intro/splash1.dart';
 
-// 공통 색상 정의
-const primaryColor = Color(0xFF4A90E2);
-const secondaryColor = Color(0xFF50E3C2);
+// 공통 색상 정의 (웜한 초록색과 블루색 적용)
+const primaryColor = Color(0xFF6ABF69); // 따뜻한 초록색
+const secondaryColor = Color(0xFF5C8AFF); // 따뜻한 블루색
 
 // 공통 텍스트 스타일
 const textTheme = TextTheme(
@@ -38,16 +38,18 @@ AppBarTheme appBarTheme(Color backgroundColor) => AppBarTheme(
 // 라이트 테마
 final ThemeData lightTheme = ThemeData(
   primaryColor: primaryColor,
-  scaffoldBackgroundColor: const Color(0xFFF9FAFB),
-  appBarTheme: appBarTheme(const Color(0xFFF9FAFB)),
+  scaffoldBackgroundColor: Colors.white, // 라이트 모드 배경을 흰색으로 설정
+  appBarTheme: appBarTheme(Colors.white),
   textTheme: textTheme,
-  colorScheme: const ColorScheme.light(
+  colorScheme: ColorScheme.light(
     primary: primaryColor,
     secondary: secondaryColor,
     surface: Colors.white,
+    background: Colors.white,
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.black,
+    onBackground: Colors.black,
   ),
   indicatorColor: primaryColor,
   useMaterial3: true,
@@ -56,16 +58,18 @@ final ThemeData lightTheme = ThemeData(
 // 다크 테마
 final ThemeData darkTheme = ThemeData(
   primaryColor: primaryColor,
-  scaffoldBackgroundColor: const Color(0xFF121212),
-  appBarTheme: appBarTheme(const Color(0xFF121212)),
+  scaffoldBackgroundColor: Colors.black, // 다크 모드 배경을 검은색으로 설정
+  appBarTheme: appBarTheme(Colors.black),
   textTheme: darkTextTheme,
-  colorScheme: const ColorScheme.dark(
+  colorScheme: ColorScheme.dark(
     primary: primaryColor,
     secondary: secondaryColor,
-    surface: Color(0xFF1E1E1E),
+    surface: Colors.black,
+    background: Colors.black,
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.white,
+    onBackground: Colors.white,
   ),
   indicatorColor: primaryColor,
   useMaterial3: true,

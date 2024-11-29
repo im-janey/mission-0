@@ -162,131 +162,122 @@ class _PH9PageState extends State<PHQ9Page> {
     final currentQuestion = _questions[_currentQuestionIndex];
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // 왼쪽 상단 리스트 버튼
-          Positioned(
-            top: 40,
-            left: 20,
-            child: IconButton(
-              icon: const Icon(Icons.list, size: 30),
-              onPressed: () {},
-            ),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.list),
+          onPressed: () {
+            // 리스트 아이콘 동작
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // 설정 버튼 동작
+            },
           ),
-
-          // 오른쪽 상단 설정 버튼
-          Positioned(
-            top: 40,
-            right: 20,
-            child: IconButton(
-              icon: const Icon(Icons.settings, size: 30),
-              onPressed: () {
-                // 설정 버튼 동작
-              },
-            ),
-          ),
-
+        ],
+      ),
+      body:
           // 캐릭터와 질문 영역
           Center(
-            child: Column(
+        child: Column(
+          children: [
+            const SizedBox(height: 200),
+            // 말풍선 카드
+            Stack(
+              alignment: Alignment.topCenter,
               children: [
-                const SizedBox(height: 200),
-                // 말풍선 카드
-                Stack(
-                  alignment: Alignment.topCenter,
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 30),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    currentQuestion["text"] as String,
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.blue.shade700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // 답변 영역
+            if (currentQuestion["type"] == "text")
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
                   children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 30),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        currentQuestion["text"] as String,
-                        style: TextStyle(
-                          fontSize: 30,
-                          color: Colors.blue.shade700,
+                    Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        decoration: const InputDecoration(
+                          labelText: "답변을 입력하세요",
+                          border: OutlineInputBorder(),
                         ),
-                        textAlign: TextAlign.center,
                       ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(80, 60), // 최소 크기: 가로 200, 세로 60
+                        padding: EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10), // 버튼 내부 패딩
+                        textStyle: TextStyle(fontSize: 18), // 글씨 크기ㅇㅁㄴㅇㄹ
+                      ),
+                      onPressed: () {
+                        if (_textController.text.isNotEmpty) {
+                          _nextQuestion(_textController.text);
+                        }
+                      },
+                      child: const Text("다음"),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-
-                // 답변 영역
-                if (currentQuestion["type"] == "text")
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _textController,
-                            decoration: const InputDecoration(
-                              labelText: "답변을 입력하세요",
-                              border: OutlineInputBorder(),
+              )
+            else if (currentQuestion["type"] == "choice")
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: (currentQuestion["choices"] as List<String>)
+                    .map((choice) => Padding(
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 5), // 위아래 패딩
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize:
+                                  Size(180, 60), // 최소 크기: 가로 180, 세로 60
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 40), // 버튼 내부 패딩
+                              textStyle: TextStyle(fontSize: 24), // 글씨 크기
                             ),
+                            onPressed: () => _nextQuestion(choice),
+                            child: Text(choice),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(80, 60), // 최소 크기: 가로 200, 세로 60
-                            padding: EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 10), // 버튼 내부 패딩
-                            textStyle: TextStyle(fontSize: 18), // 글씨 크기ㅇㅁㄴㅇㄹ
-                          ),
-                          onPressed: () {
-                            if (_textController.text.isNotEmpty) {
-                              _nextQuestion(_textController.text);
-                            }
-                          },
-                          child: const Text("다음"),
-                        ),
-                      ],
-                    ),
-                  )
-                else if (currentQuestion["type"] == "choice")
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: (currentQuestion["choices"] as List<String>)
-                        .map((choice) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5), // 위아래 패딩
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize:
-                                      Size(180, 60), // 최소 크기: 가로 180, 세로 60
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 40), // 버튼 내부 패딩
-                                  textStyle: TextStyle(fontSize: 24), // 글씨 크기
-                                ),
-                                onPressed: () => _nextQuestion(choice),
-                                child: Text(choice),
-                              ),
-                            ))
-                        .toList(),
-                  )
-                else if (currentQuestion["type"] == "next")
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () => _nextQuestion(),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(180, 60), // 최소 크기: 가로 200, 세로 60
-                        padding: EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 40), // 버튼 내부 패딩
-                        textStyle: TextStyle(fontSize: 24), // 글씨 크기
-                      ),
-                      child: const Text("다음"),
-                    ),
+                        ))
+                    .toList(),
+              )
+            else if (currentQuestion["type"] == "next")
+              Center(
+                child: ElevatedButton(
+                  onPressed: () => _nextQuestion(),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(180, 60), // 최소 크기: 가로 200, 세로 60
+                    padding: EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 40), // 버튼 내부 패딩
+                    textStyle: TextStyle(fontSize: 24), // 글씨 크기
                   ),
-                const Spacer(flex: 1),
-              ],
-            ),
-          ),
-        ],
+                  child: const Text("다음"),
+                ),
+              ),
+            const Spacer(flex: 1),
+          ],
+        ),
       ),
     );
   }
