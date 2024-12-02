@@ -70,8 +70,8 @@ final List<Map<String, dynamic>> _questions = [
   },
 ];
 
-class Phq9History extends StatelessWidget {
-  const Phq9History({super.key});
+class PHQ9History extends StatelessWidget {
+  const PHQ9History({super.key});
 
   Future<List<Map<String, dynamic>>> _getSessions() async {
     try {

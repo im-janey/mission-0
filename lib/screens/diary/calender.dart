@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../home/diary.dart';
+import 'diary_page.dart';
 
 class Calendar extends StatefulWidget {
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'diary.dart';
+import '../diary/calender.dart';
 import 'home.dart';
 import 'phq9.dart';
 
@@ -27,13 +27,7 @@ class _AppPageState extends State<AppPage> {
         page = const HomePage();
         break;
       case 2:
-        page = DiaryPage(
-          date: DateTime.now(),
-          initialImageUrl: null,
-          initialNote: null,
-          onSave: (imageUrl, note) {},
-          onDelete: () {},
-        );
+        page = Calendar();
         break;
       default:
         throw UnimplementedError('No widget for $selectedIndex');

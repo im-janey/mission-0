@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:misson_0/screens/home/phq9_history.dart';
 
-import 'phq9_history.dart';
+import 'setting.dart';
 
 class PHQ9Page extends StatefulWidget {
   const PHQ9Page({super.key});
@@ -96,7 +97,7 @@ class _PH9PageState extends State<PHQ9Page> {
     },
     {
       "text":
-      "8) 다른 사람들이 주목할 정도로 너무 느리게 움직이거나 말을 함. 또는 반대로 평상시보다 많이 움직여서, 너무 안절부절못하거나 들떠 있음",
+          "8) 다른 사람들이 주목할 정도로 너무 느리게 움직이거나 말을 함. 또는 반대로 평상시보다 많이 움직여서, 너무 안절부절못하거나 들떠 있음",
       "type": "choice",
       "choices": [
         "전혀 방해 받지 않았다",
@@ -144,7 +145,6 @@ class _PH9PageState extends State<PHQ9Page> {
     },
   ];
 
-
   int _currentQuestionIndex = 0;
   final Map<int, String> _answers = {};
   final TextEditingController _textController = TextEditingController();
@@ -179,7 +179,8 @@ class _PH9PageState extends State<PHQ9Page> {
 
       // Firestore에 데이터를 저장
       await FirebaseFirestore.instance.collection('phq9_responses').add({
-        'responses': _answers.map((key, value) => MapEntry(key.toString(), value)),
+        'responses':
+            _answers.map((key, value) => MapEntry(key.toString(), value)),
         'totalScore': totalScore,
         'diagnosis': diagnosis,
         'timestamp': FieldValue.serverTimestamp(),
@@ -191,7 +192,6 @@ class _PH9PageState extends State<PHQ9Page> {
       print("Error saving to Firestore: $e");
     }
   }
-
 
   /// 총 점수 계산
   int _calculateTotalScore() {
@@ -247,14 +247,20 @@ class _PH9PageState extends State<PHQ9Page> {
         leading: IconButton(
           icon: const Icon(Icons.list),
           onPressed: () {
-            // 리스트 아이콘 동작
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PHQ9History()),
+            );
           },
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // 설정 버튼 동작
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Menu()),
+              );
             },
           ),
         ],
@@ -288,35 +294,36 @@ class _PH9PageState extends State<PHQ9Page> {
               ],
             ),
             const SizedBox(height: 20),
-                if (currentQuestion["type"] == "text")
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _textController,
-                            decoration: const InputDecoration(
-                              labelText: "답변을 입력하세요",
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
+            if (currentQuestion["type"] == "text")
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        decoration: const InputDecoration(
+                          labelText: "답변을 입력하세요",
+                          border: OutlineInputBorder(),
                         ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            _handleNextQuestion(_textController.text); // 비어있어도 넘어가도록 설정
-                          },
-                          child: const Text("다음"),
-                        ),
-                      ],
+                      ),
                     ),
-                  )
-                else if (currentQuestion["type"] == "choice")
-                  Column(
-                    children: (currentQuestion["choices"] as List<String>)
-                        .map(
-                          (choice) => Padding(
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        _handleNextQuestion(
+                            _textController.text); // 비어있어도 넘어가도록 설정
+                      },
+                      child: const Text("다음"),
+                    ),
+                  ],
+                ),
+              )
+            else if (currentQuestion["type"] == "choice")
+              Column(
+                children: (currentQuestion["choices"] as List<String>)
+                    .map(
+                      (choice) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: ElevatedButton(
                           onPressed: () => _handleNextQuestion(choice),
@@ -324,42 +331,42 @@ class _PH9PageState extends State<PHQ9Page> {
                         ),
                       ),
                     )
-                        .toList(),
-                  )
-                else if (currentQuestion["type"] == "result")
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "진단 결과:",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          // 결과 계산 함수 호출 (answers는 이전 질문들의 응답이 저장된 목록으로 가정)
-                          Text(
-                            currentQuestion["calculate"](_answers), // calculate 함수에서 결과를 동적으로 반환
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              _handleNextQuestion(""); // 결과 이후에도 계속 진행
-                            },
-                            child: const Text("다음"),
-                          ),
-                        ],
+                    .toList(),
+              )
+            else if (currentQuestion["type"] == "result")
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "진단 결과:",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                const Spacer(),
-              ],
-            ),
-          ),
-        ],
+                    const SizedBox(height: 10),
+                    // 결과 계산 함수 호출 (answers는 이전 질문들의 응답이 저장된 목록으로 가정)
+                    Text(
+                      currentQuestion["calculate"](
+                          _answers), // calculate 함수에서 결과를 동적으로 반환
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        _handleNextQuestion(""); // 결과 이후에도 계속 진행
+                      },
+                      child: const Text("다음"),
+                    ),
+                  ],
+                ),
+              ),
+            const Spacer(),
+          ],
+        ),
       ),
     );
   }

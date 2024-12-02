@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import 'firebase_options.dart';
 import 'screens/intro/splash1.dart';
 
 // 공통 색상 정의 (웜한 초록색과 블루색 적용)
@@ -75,7 +77,11 @@ final ThemeData darkTheme = ThemeData(
   useMaterial3: true,
 );
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
