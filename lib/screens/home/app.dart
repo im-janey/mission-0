@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../diary/calender.dart';
 import 'home.dart';
-import 'phq9.dart';
+import '../phq9/phq9.dart';
 
 class AppPage extends StatefulWidget {
   const AppPage({super.key});
@@ -52,7 +52,7 @@ class _AppPageState extends State<AppPage> {
                   items: const [
                     BottomNavigationBarItem(
                       icon: Icon(Icons.diversity_1),
-                      label: 'PH9',
+                      label: 'PHQ9',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.face),

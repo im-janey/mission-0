@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:misson_0/screens/home/phq9_history.dart';
+import 'package:misson_0/screens/phq9/phq9_history.dart';
 
-import 'setting.dart';
+import '../home/setting.dart';
 
 class PHQ9Page extends StatefulWidget {
   const PHQ9Page({super.key});
@@ -265,12 +265,10 @@ class _PH9PageState extends State<PHQ9Page> {
           ),
         ],
       ),
-      body:
-          // 캐릭터와 질문 영역
-          Center(
+      body: Center(
         child: Column(
           children: [
-            const SizedBox(height: 200),
+            
             // 말풍선 카드
             Stack(
               alignment: Alignment.topCenter,
