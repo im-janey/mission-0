@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../diary/calender.dart';
-import 'home.dart';
 import '../phq9/phq9.dart';
+import '../phq9/phq9_splash.dart';
+import 'home.dart';
 
 class AppPage extends StatefulWidget {
   const AppPage({super.key});
@@ -13,24 +14,32 @@ class AppPage extends StatefulWidget {
 
 class _AppPageState extends State<AppPage> {
   var selectedIndex = 1;
+  bool showSplash = true; // 스플래시 페이지 상태
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
 
+    // 현재 페이지 설정
     Widget page;
-    switch (selectedIndex) {
-      case 0:
+    if (selectedIndex == 0) {
+      if (showSplash) {
+        page = PHQ9SplashScreen(
+          onSplashComplete: () {
+            setState(() {
+              showSplash = false;
+            });
+          },
+        );
+      } else {
         page = const PHQ9Page();
-        break;
-      case 1:
-        page = const HomePage();
-        break;
-      case 2:
-        page = Calendar();
-        break;
-      default:
-        throw UnimplementedError('No widget for $selectedIndex');
+      }
+    } else if (selectedIndex == 1) {
+      page = const HomePage();
+    } else if (selectedIndex == 2) {
+      page = Calendar();
+    } else {
+      throw UnimplementedError('No widget for $selectedIndex');
     }
 
     var mainArea = ColoredBox(
@@ -67,6 +76,8 @@ class _AppPageState extends State<AppPage> {
                   onTap: (value) {
                     setState(() {
                       selectedIndex = value;
+                      if (value != 0)
+                        showSplash = true; // PHQ9가 아닌 페이지로 전환 시 스플래시 초기화
                     });
                   },
                 ),
@@ -93,11 +104,11 @@ class _AppPageState extends State<AppPage> {
                   ],
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (value) {
-                    setState(
-                      () {
-                        selectedIndex = value;
-                      },
-                    );
+                    setState(() {
+                      selectedIndex = value;
+                      if (value != 0)
+                        showSplash = true; // PHQ9가 아닌 페이지로 전환 시 스플래시 초기화
+                    });
                   },
                 ),
                 Expanded(child: mainArea),

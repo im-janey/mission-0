@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:misson_0/screens/phq9/phq9_history.dart';
 
 import '../home/setting.dart';
+import 'phq9_history.dart';
 
 class PHQ9Page extends StatefulWidget {
   const PHQ9Page({super.key});
@@ -13,7 +12,7 @@ class PHQ9Page extends StatefulWidget {
 
 class _PH9PageState extends State<PHQ9Page> {
   final List<Map<String, dynamic>> _questions = [
-    {"text": "이름이 무엇인가요?", "type": "text"},
+    {"text": "검사 대상자의 이름이 무엇인가요?", "type": "text"},
     {"text": "나이가 몇 살인가요?", "type": "text"},
     {
       "text": "성별이 어떻게 되나요?",
@@ -21,7 +20,7 @@ class _PH9PageState extends State<PHQ9Page> {
       "choices": ["남성", "여성", "기타"]
     },
     {
-      "text": "예수님 믿으세요?",
+      "text": "예수님을 믿으시나요?",
       "type": "choice",
       "choices": ["네", "아니요"]
     },
@@ -139,7 +138,7 @@ class _PH9PageState extends State<PHQ9Page> {
     },
     {"text": "기도제목이 있다면 무엇인가요?", "type": "text"},
     {
-      "text": "다시 한번 묻겠습니다. 예수님 믿으세요?",
+      "text": "(재질문) 예수님을 믿으시나요?",
       "type": "choice",
       "choices": ["네", "아니요"]
     },
@@ -149,14 +148,10 @@ class _PH9PageState extends State<PHQ9Page> {
   final Map<int, String> _answers = {};
   final TextEditingController _textController = TextEditingController();
 
-  final Map<String, int> _scoreMap = {
-    "전혀 방해 받지 않았다": 0,
-    "며칠 동안 방해 받았다": 1,
-    "7일 이상 방해 받았다": 2,
-    "거의 매일 방해 받았다": 3,
-  };
+  double _getProgress() {
+    return (_currentQuestionIndex + 1) / _questions.length;
+  }
 
-  /// 다음 질문으로 이동
   void _handleNextQuestion([String? response]) {
     if (response != null) {
       _answers[_currentQuestionIndex] = response;
@@ -167,80 +162,53 @@ class _PH9PageState extends State<PHQ9Page> {
         _currentQuestionIndex++;
         _textController.clear();
       } else {
-        _saveToFirestore(); // 모든 질문 완료 시 Firestore에 저장
+        _showCompletionDialog();
       }
     });
   }
 
-  Future<void> _saveToFirestore() async {
-    try {
-      final int totalScore = _calculateTotalScore();
-      final String diagnosis = _getDiagnosis(totalScore);
-
-      // Firestore에 데이터를 저장
-      await FirebaseFirestore.instance.collection('phq9_responses').add({
-        'responses':
-            _answers.map((key, value) => MapEntry(key.toString(), value)),
-        'totalScore': totalScore,
-        'diagnosis': diagnosis,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-
-      // 진단 결과 대화상자 표시
-      _showFinalScoreDialog(totalScore, diagnosis);
-    } catch (e) {
-      print("Error saving to Firestore: $e");
-    }
+  void _handlePreviousQuestion() {
+    setState(() {
+      if (_currentQuestionIndex > 0) {
+        _currentQuestionIndex--;
+        _textController.clear();
+      }
+    });
   }
 
-  /// 총 점수 계산
-  int _calculateTotalScore() {
-    return _answers.entries
-        .where((entry) => _scoreMap.containsKey(entry.value))
-        .fold(0, (sum, entry) => sum + (_scoreMap[entry.value] ?? 0));
-  }
-
-  /// 진단 결과 가져오기
-  String _getDiagnosis(int score) {
-    if (score < 5) return "우울증 없음";
-    if (score < 10) return "경증 우울증";
-    if (score < 15) return "중등도 우울증";
-    if (score < 20) return "중등도-중증 우울증";
-    return "중증 우울증";
-  }
-
-  /// 결과 다이얼로그 표시
-  void _showFinalScoreDialog(int totalScore, String diagnosis) {
+  void _showCompletionDialog() {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("결과 확인"),
-          content: Text(
-            "총 점수: $totalScore\n진단 결과: $diagnosis",
-            style: const TextStyle(fontSize: 18),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _currentQuestionIndex = 0;
-                  _answers.clear();
-                  _textController.clear();
-                });
-              },
-              child: const Text("처음으로"),
+      builder: (context) => AlertDialog(
+        title: const Text("검사 완료"),
+        content: const Text("모든 질문이 완료되었습니다."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _currentQuestionIndex = 0; // 진행도 초기화
+                _answers.clear(); // 사용자 응답 초기화
+                _textController.clear();
+              });
+            },
+            child: const Text(
+              "다시 시작",
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.blue,
+              ),
             ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final currentQuestion = _questions[_currentQuestionIndex];
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -253,6 +221,7 @@ class _PH9PageState extends State<PHQ9Page> {
             );
           },
         ),
+        title: const Text("PHQ-9"),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -265,104 +234,166 @@ class _PH9PageState extends State<PHQ9Page> {
           ),
         ],
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
-            // 말풍선 카드
-            Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 30),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    currentQuestion["text"] as String,
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.blue.shade700,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 20),
-            if (currentQuestion["type"] == "text")
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Row(
-                  children: [
-                    Expanded(
+            // 프로그레스 바
+            LinearProgressIndicator(
+              value: _getProgress(),
+              backgroundColor:
+                  isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "질문 진행도: ${(_getProgress() * 100).toStringAsFixed(0)}%",
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+                color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 40),
+            // 질문 텍스트
+            Text(
+              currentQuestion["text"] as String,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
+            const Spacer(),
+            // 답변 및 버튼 영역
+            Padding(
+              padding: const EdgeInsets.only(bottom: 50), // 바닥에서 띄우기
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (currentQuestion["type"] == "text")
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20), // 답변 창 간격
                       child: TextField(
                         controller: _textController,
-                        decoration: const InputDecoration(
-                          labelText: "답변을 입력하세요",
-                          border: OutlineInputBorder(),
+                        style: TextStyle(
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        _handleNextQuestion(
-                            _textController.text); // 비어있어도 넘어가도록 설정
-                      },
-                      child: const Text("다음"),
-                    ),
-                  ],
-                ),
-              )
-            else if (currentQuestion["type"] == "choice")
-              Column(
-                children: (currentQuestion["choices"] as List<String>)
-                    .map(
-                      (choice) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: ElevatedButton(
-                          onPressed: () => _handleNextQuestion(choice),
-                          child: Text(choice),
+                        decoration: InputDecoration(
+                          labelText: "답변을 입력하세요",
+                          labelStyle: TextStyle(
+                            color:
+                                isDarkMode ? Colors.grey.shade400 : Colors.grey,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.grey.shade600
+                                  : Colors.grey.shade400,
+                            ),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
                         ),
                       ),
                     )
-                    .toList(),
-              )
-            else if (currentQuestion["type"] == "result")
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "진단 결과:",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                  else if (currentQuestion["type"] == "choice")
+                    Column(
+                      children: (currentQuestion["choices"] as List<String>)
+                          .map(
+                            (choice) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: ElevatedButton(
+                                onPressed: () => _handleNextQuestion(choice),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: Text(
+                                  choice,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  const SizedBox(height: 35),
+                  // 이전 및 다음 버튼
+                  Row(
+                    children: [
+                      // 이전 버튼
+                      if (_currentQuestionIndex > 0)
+                        ElevatedButton.icon(
+                          onPressed: _handlePreviousQuestion,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey.withOpacity(0.8),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            "이전",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      if (_currentQuestionIndex > 0) const Spacer(), // 간격 추가
+
+                      // 다음 버튼
+                      ElevatedButton.icon(
+                        onPressed: () => _handleNextQuestion(
+                            currentQuestion["type"] == "text"
+                                ? _textController.text
+                                : null),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.withOpacity(1.0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          "다음",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    // 결과 계산 함수 호출 (answers는 이전 질문들의 응답이 저장된 목록으로 가정)
-                    Text(
-                      currentQuestion["calculate"](
-                          _answers), // calculate 함수에서 결과를 동적으로 반환
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        _handleNextQuestion(""); // 결과 이후에도 계속 진행
-                      },
-                      child: const Text("다음"),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
-            const Spacer(),
+            ),
           ],
         ),
       ),
